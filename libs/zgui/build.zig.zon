@@ -10,6 +10,7 @@
     },
     .dependencies = .{
         .zglfw = .{ .path = "../zglfw" },
+        .zsdl = .{ .path = "../zsdl" },
         .zgpu = .{ .path = "../zgpu" },
     },
 }

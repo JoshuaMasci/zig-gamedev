@@ -7,6 +7,7 @@ pub const Backend = enum {
     glfw_dx12,
     win32_dx12,
     glfw,
+    sdl2_opengl3,
 };
 
 pub fn build(b: *std.Build) void {
@@ -245,6 +246,15 @@ pub fn build(b: *std.Build) void {
                     "libs/imgui/backends/imgui_impl_glfw.cpp",
                 },
                 .flags = cflags,
+            });
+        },
+        .sdl2_opengl3 => {
+            imgui.addCSourceFiles(.{
+                .files = &.{
+                    "libs/imgui/backends/imgui_impl_sdl2.cpp",
+                    "libs/imgui/backends/imgui_impl_opengl3.cpp",
+                },
+                .flags = &(cflags.* ++ .{"-DIMGUI_IMPL_OPENGL_LOADER_CUSTOM"}),
             });
         },
         .no_backend => {},
