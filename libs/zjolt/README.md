@@ -1,4 +1,4 @@
-# zphysics v0.1.0 - Build package, [C API](libs/JoltC) and bindings for Jolt Physics
+# zjolt v0.1.0 - Build package, [C API](libs/JoltC) and bindings for Jolt Physics
 
 [Jolt Physics](https://github.com/jrouwe/JoltPhysics) is a fast and modern physics library written in C++.
 
@@ -8,9 +8,9 @@ For a simple sample applications please see [here](https://github.com/michal-z/z
 
 ## Getting started
 
-Copy `zphysics` to a subdirectory of your project and add the following to your `build.zig.zon` .dependencies:
+Copy `zjolt` to a subdirectory of your project and add the following to your `build.zig.zon` .dependencies:
 ```zig
-    .zphysics = .{ .path = "libs/zphysics" },
+    .zjolt = .{ .path = "libs/zjolt" },
 ```
 
 Then in your `build.zig` add:
@@ -18,19 +18,19 @@ Then in your `build.zig` add:
 pub fn build(b: *std.Build) void {
     const exe = b.addExecutable(.{ ... });
 
-    const zphysics = b.dependency("zphysics", .{
+    const zjolt = b.dependency("zjolt", .{
         .use_double_precision = false,
         .enable_cross_platform_determinism = true,
     });
-    exe.root_module.addImport("zphysics", zphysics.module("root"));
-    exe.linkLibrary(zphysics.artifact("joltc"));
+    exe.root_module.addImport("zjolt", zjolt.module("root"));
+    exe.linkLibrary(zjolt.artifact("joltc"));
 }
 ```
 
-Now in your code you may import and use `zphysics`:
+Now in your code you may import and use `zjolt`:
 
 ```zig
-const zphy = @import("zphysics");
+const zphy = @import("zjolt");
 
 pub fn main() !void {
     try zphy.init(allocator, .{});

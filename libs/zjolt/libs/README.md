@@ -4,7 +4,7 @@
 
 This project aims to provide high-performance, consistent and roboust C API for Jolt.
 
-JoltPhysicsC is not yet complete but already usable, to get started please take a look at our [tests](https://github.com/michal-z/zig-gamedev/blob/main/libs/zphysics/libs/JoltC/JoltPhysicsC_Tests.c).
+JoltPhysicsC is not yet complete but already usable, to get started please take a look at our [tests](https://github.com/michal-z/zig-gamedev/blob/main/libs/zjolt/libs/JoltC/JoltPhysicsC_Tests.c).
 
 Folder structure:
 

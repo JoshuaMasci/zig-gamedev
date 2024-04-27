@@ -35,9 +35,9 @@ pub fn build(b: *std.Build) void {
     const options_module = options_step.createModule();
 
     const zjolt = b.addModule("root", .{
-        .root_source_file = .{ .path = "src/zphysics.zig" },
+        .root_source_file = .{ .path = "src/zjolt.zig" },
         .imports = &.{
-            .{ .name = "zphysics_options", .module = options_module },
+            .{ .name = "zjolt_options", .module = options_module },
         },
     });
     zjolt.addIncludePath(.{ .path = "libs/JoltC" });
@@ -203,11 +203,11 @@ pub fn build(b: *std.Build) void {
         },
     });
 
-    const test_step = b.step("test", "Run zphysics tests");
+    const test_step = b.step("test", "Run zjolt tests");
 
     const tests = b.addTest(.{
-        .name = "zphysics-tests",
-        .root_source_file = .{ .path = "src/zphysics.zig" },
+        .name = "zjolt-tests",
+        .root_source_file = .{ .path = "src/zjolt.zig" },
         .target = target,
         .optimize = optimize,
     });
@@ -230,7 +230,7 @@ pub fn build(b: *std.Build) void {
         },
     });
 
-    tests.root_module.addImport("zphysics_options", options_module);
+    tests.root_module.addImport("zjolt_options", options_module);
     tests.addIncludePath(.{ .path = "libs/JoltC" });
     tests.linkLibrary(joltc);
 

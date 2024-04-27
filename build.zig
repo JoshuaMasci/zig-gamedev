@@ -224,11 +224,11 @@ fn tests(
     });
     test_step.dependOn(&b.addRunArtifact(zopengl.artifact("zopengl-tests")).step);
 
-    const zphysics = b.dependency("zphysics", .{
+    const zjolt = b.dependency("zjolt", .{
         .target = target,
         .optimize = optimize,
     });
-    test_step.dependOn(&b.addRunArtifact(zphysics.artifact("zphysics-tests")).step);
+    test_step.dependOn(&b.addRunArtifact(zjolt.artifact("zjolt-tests")).step);
 
     const zpool = b.dependency("zpool", .{
         .target = target,

@@ -24,7 +24,7 @@
         .zmesh = .{ .path = "libs/zmesh" },
         .znoise = .{ .path = "libs/znoise" },
         .zopengl = .{ .path = "libs/zopengl" },
-        .zphysics = .{ .path = "libs/zphysics" },
+        .zjolt = .{ .path = "libs/zjolt" },
         .zpix = .{ .path = "libs/zpix" },
         .zpool = .{ .path = "libs/zpool" },
         .zsdl = .{ .path = "libs/zsdl" },

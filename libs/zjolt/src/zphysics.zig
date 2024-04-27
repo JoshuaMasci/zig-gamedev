@@ -1,7 +1,7 @@
 const builtin = @import("builtin");
 const std = @import("std");
 const assert = std.debug.assert;
-const options = @import("zphysics_options");
+const options = @import("zjolt_options");
 const c = @cImport({
     if (options.use_double_precision) @cDefine("JPH_DOUBLE_PRECISION", "");
     if (options.enable_asserts) @cDefine("JPH_ENABLE_ASSERTS", "");
@@ -1244,7 +1244,7 @@ pub fn init(allocator: std.mem.Allocator, args: struct {
     mem_allocations = std.AutoHashMap(usize, SizeAndAlignment).init(allocator);
     mem_allocations.?.ensureTotalCapacity(32) catch unreachable;
 
-    c.JPC_RegisterCustomAllocator(zphysicsAlloc, zphysicsFree, zphysicsAlignedAlloc, zphysicsFree);
+    c.JPC_RegisterCustomAllocator(zjoltAlloc, zjoltFree, zjoltAlignedAlloc, zjoltFree);
 
     c.JPC_CreateFactory();
     c.JPC_RegisterTypes();
@@ -3419,7 +3419,7 @@ pub const Constraint = opaque {
 // Memory allocation
 //
 //--------------------------------------------------------------------------------------------------
-fn zphysicsAlloc(size: usize) callconv(.C) ?*anyopaque {
+fn zjoltAlloc(size: usize) callconv(.C) ?*anyopaque {
     mem_mutex.lock();
     defer mem_mutex.unlock();
 
@@ -3428,17 +3428,17 @@ fn zphysicsAlloc(size: usize) callconv(.C) ?*anyopaque {
         std.math.log2_int(u29, @as(u29, @intCast(mem_alignment))),
         @returnAddress(),
     );
-    if (ptr == null) @panic("zphysics: out of memory");
+    if (ptr == null) @panic("zjolt: out of memory");
 
     mem_allocations.?.put(
         @intFromPtr(ptr),
         .{ .size = @as(u48, @intCast(size)), .alignment = mem_alignment },
-    ) catch @panic("zphysics: out of memory");
+    ) catch @panic("zjolt: out of memory");
 
     return ptr;
 }
 
-fn zphysicsAlignedAlloc(size: usize, alignment: usize) callconv(.C) ?*anyopaque {
+fn zjoltAlignedAlloc(size: usize, alignment: usize) callconv(.C) ?*anyopaque {
     mem_mutex.lock();
     defer mem_mutex.unlock();
 
@@ -3447,17 +3447,17 @@ fn zphysicsAlignedAlloc(size: usize, alignment: usize) callconv(.C) ?*anyopaque 
         std.math.log2_int(u29, @as(u29, @intCast(alignment))),
         @returnAddress(),
     );
-    if (ptr == null) @panic("zphysics: out of memory");
+    if (ptr == null) @panic("zjolt: out of memory");
 
     mem_allocations.?.put(
         @intFromPtr(ptr),
         .{ .size = @as(u32, @intCast(size)), .alignment = @as(u16, @intCast(alignment)) },
-    ) catch @panic("zphysics: out of memory");
+    ) catch @panic("zjolt: out of memory");
 
     return ptr;
 }
 
-fn zphysicsFree(maybe_ptr: ?*anyopaque) callconv(.C) void {
+fn zjoltFree(maybe_ptr: ?*anyopaque) callconv(.C) void {
     if (maybe_ptr) |ptr| {
         mem_mutex.lock();
         defer mem_mutex.unlock();
@@ -3502,7 +3502,7 @@ test "jolt_c.helloworld" {
     try expect(ret != 0);
 }
 
-test "zphysics.BodyCreationSettings" {
+test "zjolt.BodyCreationSettings" {
     try init(std.testing.allocator, .{});
     defer deinit();
 
@@ -3560,7 +3560,7 @@ test "zphysics.BodyCreationSettings" {
     try expect(bcs0.shape == bcs1.shape);
 }
 
-test "zphysics.basic" {
+test "zjolt.basic" {
     try init(std.testing.allocator, .{});
     defer deinit();
 
@@ -3671,7 +3671,7 @@ test "zphysics.basic" {
     try expect(box_shape.getUserData() == 456);
 }
 
-test "zphysics.shape.sphere" {
+test "zjolt.shape.sphere" {
     try init(std.testing.allocator, .{});
     defer deinit();
 
@@ -3712,7 +3712,7 @@ test "zphysics.shape.sphere" {
     try expect(sphere_shape.getUserData() == 1456);
 }
 
-test "zphysics.shape.capsule" {
+test "zjolt.shape.capsule" {
     try init(std.testing.allocator, .{});
     defer deinit();
 
@@ -3751,7 +3751,7 @@ test "zphysics.shape.capsule" {
     try expect(capsule_shape.getUserData() == 146);
 }
 
-test "zphysics.shape.taperedcapsule" {
+test "zjolt.shape.taperedcapsule" {
     try init(std.testing.allocator, .{});
     defer deinit();
 
@@ -3791,7 +3791,7 @@ test "zphysics.shape.taperedcapsule" {
     try expect(capsule_shape.getUserData() == 1146);
 }
 
-test "zphysics.shape.cylinder" {
+test "zjolt.shape.cylinder" {
     try init(std.testing.allocator, .{});
     defer deinit();
 
@@ -3833,7 +3833,7 @@ test "zphysics.shape.cylinder" {
     try expect(cylinder_shape.getUserData() == 146);
 }
 
-test "zphysics.shape.convexhull" {
+test "zjolt.shape.convexhull" {
     try init(std.testing.allocator, .{});
     defer deinit();
 
@@ -3868,7 +3868,7 @@ test "zphysics.shape.convexhull" {
     try expect(shape.getUserData() == 111);
 }
 
-test "zphysics.shape.heightfield" {
+test "zjolt.shape.heightfield" {
     try init(std.testing.allocator, .{});
     defer deinit();
 
@@ -3915,7 +3915,7 @@ test "zphysics.shape.heightfield" {
     try expect(shape.getUserData() == 1112);
 }
 
-test "zphysics.shape.meshshape" {
+test "zjolt.shape.meshshape" {
     try init(std.testing.allocator, .{});
     defer deinit();
 
@@ -3953,7 +3953,7 @@ test "zphysics.shape.meshshape" {
     try expect(shape.getUserData() == 1112);
 }
 
-test "zphysics.body.basic" {
+test "zjolt.body.basic" {
     try init(std.testing.allocator, .{});
     defer deinit();
 
@@ -4127,7 +4127,7 @@ test "zphysics.body.basic" {
     try expect(physics_system.getNumActiveBodies() == 0);
 }
 
-test "zphysics.body.motion" {
+test "zjolt.body.motion" {
     try init(std.testing.allocator, .{});
     defer deinit();
 
@@ -4215,7 +4215,7 @@ test "zphysics.body.motion" {
     try expect(motion.gravity_factor == 0.5);
 }
 
-test "zphysics.debugrenderer" {
+test "zjolt.debugrenderer" {
     if (!debug_renderer_enabled) return;
 
     try init(std.testing.allocator, .{});
