@@ -1,7 +1,7 @@
 const builtin = @import("builtin");
 const std = @import("std");
 
-pub const min_zig_version = std.SemanticVersion{ .major = 0, .minor = 12, .patch = 0, .pre = "dev.2063" };
+pub const min_zig_version = std.SemanticVersion{ .major = 0, .minor = 12, .patch = 0, .pre = "" };
 
 pub fn build(b: *std.Build) !void {
     ensureZigVersion() catch return;
@@ -199,12 +199,12 @@ fn tests(
     });
     test_step.dependOn(&b.addRunArtifact(zgpu.artifact("zgpu-tests")).step);
 
-    const zgui = b.dependency("zgui", .{
+    const zimgui = b.dependency("zimgui", .{
         .target = target,
         .optimize = optimize,
         .with_te = true,
     });
-    test_step.dependOn(&b.addRunArtifact(zgui.artifact("zgui-tests")).step);
+    test_step.dependOn(&b.addRunArtifact(zimgui.artifact("zimgui-tests")).step);
 
     const zmath = b.dependency("zmath", .{
         .target = target,
@@ -224,11 +224,11 @@ fn tests(
     });
     test_step.dependOn(&b.addRunArtifact(zopengl.artifact("zopengl-tests")).step);
 
-    const zphysics = b.dependency("zphysics", .{
+    const zjolt = b.dependency("zjolt", .{
         .target = target,
         .optimize = optimize,
     });
-    test_step.dependOn(&b.addRunArtifact(zphysics.artifact("zphysics-tests")).step);
+    test_step.dependOn(&b.addRunArtifact(zjolt.artifact("zjolt-tests")).step);
 
     const zpool = b.dependency("zpool", .{
         .target = target,
