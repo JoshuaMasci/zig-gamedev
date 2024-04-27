@@ -1,4 +1,4 @@
-const gui = @import("gui.zig");
+const gui = @import("zimgui.zig");
 const backend_glfw = @import("backend_glfw.zig");
 const backend_dx12 = @import("backend_dx12.zig");
 

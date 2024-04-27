@@ -1,22 +1,22 @@
 //--------------------------------------------------------------------------------------------------
 const assert = @import("std").debug.assert;
-const gui = @import("gui.zig");
+const gui = @import("zimgui.zig");
 //--------------------------------------------------------------------------------------------------
 pub fn init() void {
-    if (zguiPlot_GetCurrentContext() == null) {
-        _ = zguiPlot_CreateContext();
+    if (zimguiPlot_GetCurrentContext() == null) {
+        _ = zimguiPlot_CreateContext();
     }
 }
 pub fn deinit() void {
-    if (zguiPlot_GetCurrentContext() != null) {
-        zguiPlot_DestroyContext(null);
+    if (zimguiPlot_GetCurrentContext() != null) {
+        zimguiPlot_DestroyContext(null);
     }
 }
 const Context = *opaque {};
 
-extern fn zguiPlot_GetCurrentContext() ?Context;
-extern fn zguiPlot_CreateContext() Context;
-extern fn zguiPlot_DestroyContext(ctx: ?Context) void;
+extern fn zimguiPlot_GetCurrentContext() ?Context;
+extern fn zimguiPlot_CreateContext() Context;
+extern fn zimguiPlot_DestroyContext(ctx: ?Context) void;
 //--------------------------------------------------------------------------------------------------
 pub const Marker = enum(i32) {
     none = -1,
@@ -88,8 +88,8 @@ pub const Style = extern struct {
     use_24h_clock: bool,
 
     /// `pub fn init() Style`
-    pub const init = zguiPlotStyle_Init;
-    extern fn zguiPlotStyle_Init() Style;
+    pub const init = zimguiPlotStyle_Init;
+    extern fn zimguiPlotStyle_Init() Style;
 
     pub fn getColor(style: Style, idx: StyleCol) [4]f32 {
         return style.colors[@intFromEnum(idx)];
@@ -99,8 +99,8 @@ pub const Style = extern struct {
     }
 };
 /// `pub fn getStyle() *Style`
-pub const getStyle = zguiPlot_GetStyle;
-extern fn zguiPlot_GetStyle() *Style;
+pub const getStyle = zimguiPlot_GetStyle;
+extern fn zimguiPlot_GetStyle() *Style;
 //--------------------------------------------------------------------------------------------------
 pub const StyleCol = enum(u32) {
     line,
@@ -130,24 +130,24 @@ const PushStyleColor4f = struct {
     c: [4]f32,
 };
 pub fn pushStyleColor4f(args: PushStyleColor4f) void {
-    zguiPlot_PushStyleColor4f(args.idx, &args.c);
+    zimguiPlot_PushStyleColor4f(args.idx, &args.c);
 }
 const PushStyleColor1u = struct {
     idx: StyleCol,
     c: u32,
 };
 pub fn pushStyleColor1u(args: PushStyleColor1u) void {
-    zguiPlot_PushStyleColor1u(args.idx, args.c);
+    zimguiPlot_PushStyleColor1u(args.idx, args.c);
 }
 const PopStyleColor = struct {
     count: i32 = 1,
 };
 pub fn popStyleColor(args: PopStyleColor) void {
-    zguiPlot_PopStyleColor(args.count);
+    zimguiPlot_PopStyleColor(args.count);
 }
-extern fn zguiPlot_PushStyleColor4f(idx: StyleCol, col: *const [4]f32) void;
-extern fn zguiPlot_PushStyleColor1u(idx: StyleCol, col: u32) void;
-extern fn zguiPlot_PopStyleColor(count: i32) void;
+extern fn zimguiPlot_PushStyleColor4f(idx: StyleCol, col: *const [4]f32) void;
+extern fn zimguiPlot_PushStyleColor1u(idx: StyleCol, col: u32) void;
+extern fn zimguiPlot_PopStyleColor(count: i32) void;
 //--------------------------------------------------------------------------------------------------
 pub const StyleVar = enum(u32) {
     line_weight, // 1f
@@ -183,32 +183,32 @@ const PushStyleVar1i = struct {
     v: i32,
 };
 pub fn pushStyleVar1i(args: PushStyleVar1i) void {
-    zguiPlot_PushStyleVar1i(args.idx, args.v);
+    zimguiPlot_PushStyleVar1i(args.idx, args.v);
 }
 const PushStyleVar1f = struct {
     idx: StyleVar,
     v: f32,
 };
 pub fn pushStyleVar1f(args: PushStyleVar1f) void {
-    zguiPlot_PushStyleVar1f(args.idx, args.v);
+    zimguiPlot_PushStyleVar1f(args.idx, args.v);
 }
 const PushStyleVar2f = struct {
     idx: StyleVar,
     v: [2]f32,
 };
 pub fn pushStyleVar2f(args: PushStyleVar2f) void {
-    zguiPlot_PushStyleVar2f(args.idx, &args.v);
+    zimguiPlot_PushStyleVar2f(args.idx, &args.v);
 }
 const PopStyleVar = struct {
     count: i32 = 1,
 };
 pub fn popStyleVar(args: PopStyleVar) void {
-    zguiPlot_PopStyleVar(args.count);
+    zimguiPlot_PopStyleVar(args.count);
 }
-extern fn zguiPlot_PushStyleVar1i(idx: StyleVar, v: i32) void;
-extern fn zguiPlot_PushStyleVar1f(idx: StyleVar, v: f32) void;
-extern fn zguiPlot_PushStyleVar2f(idx: StyleVar, v: *const [2]f32) void;
-extern fn zguiPlot_PopStyleVar(count: i32) void;
+extern fn zimguiPlot_PushStyleVar1i(idx: StyleVar, v: i32) void;
+extern fn zimguiPlot_PushStyleVar1f(idx: StyleVar, v: f32) void;
+extern fn zimguiPlot_PushStyleVar2f(idx: StyleVar, v: *const [2]f32) void;
+extern fn zimguiPlot_PopStyleVar(count: i32) void;
 //--------------------------------------------------------------------------------------------------
 pub const PlotLocation = packed struct(u32) {
     north: bool = false,
@@ -232,9 +232,9 @@ pub const LegendFlags = packed struct(u32) {
     _padding: u26 = 0,
 };
 pub fn setupLegend(location: PlotLocation, flags: LegendFlags) void {
-    zguiPlot_SetupLegend(location, flags);
+    zimguiPlot_SetupLegend(location, flags);
 }
-extern fn zguiPlot_SetupLegend(location: PlotLocation, flags: LegendFlags) void;
+extern fn zimguiPlot_SetupLegend(location: PlotLocation, flags: LegendFlags) void;
 //--------------------------------------------------------------------------------------------------
 pub const AxisFlags = packed struct(u32) {
     no_label: bool = false,
@@ -276,9 +276,9 @@ pub const SetupAxis = struct {
     flags: AxisFlags = .{},
 };
 pub fn setupAxis(axis: Axis, args: SetupAxis) void {
-    zguiPlot_SetupAxis(axis, if (args.label) |l| l else null, args.flags);
+    zimguiPlot_SetupAxis(axis, if (args.label) |l| l else null, args.flags);
 }
-extern fn zguiPlot_SetupAxis(axis: Axis, label: ?[*:0]const u8, flags: AxisFlags) void;
+extern fn zimguiPlot_SetupAxis(axis: Axis, label: ?[*:0]const u8, flags: AxisFlags) void;
 //----------------------------------------------------------------------------------------------
 pub const Condition = enum(u32) {
     none = @intFromEnum(gui.Condition.none),
@@ -291,13 +291,13 @@ const SetupAxisLimits = struct {
     cond: Condition = .once,
 };
 pub fn setupAxisLimits(axis: Axis, args: SetupAxisLimits) void {
-    zguiPlot_SetupAxisLimits(axis, args.min, args.max, args.cond);
+    zimguiPlot_SetupAxisLimits(axis, args.min, args.max, args.cond);
 }
-extern fn zguiPlot_SetupAxisLimits(axis: Axis, min: f64, max: f64, cond: Condition) void;
+extern fn zimguiPlot_SetupAxisLimits(axis: Axis, min: f64, max: f64, cond: Condition) void;
 //----------------------------------------------------------------------------------------------
 /// `pub fn setupFinish() void`
-pub const setupFinish = zguiPlot_SetupFinish;
-extern fn zguiPlot_SetupFinish() void;
+pub const setupFinish = zimguiPlot_SetupFinish;
+extern fn zimguiPlot_SetupFinish() void;
 //----------------------------------------------------------------------------------------------
 pub const Flags = packed struct(u32) {
     no_title: bool = false,
@@ -326,9 +326,9 @@ pub const BeginPlot = struct {
     flags: Flags = .{},
 };
 pub fn beginPlot(title_id: [:0]const u8, args: BeginPlot) bool {
-    return zguiPlot_BeginPlot(title_id, args.w, args.h, args.flags);
+    return zimguiPlot_BeginPlot(title_id, args.w, args.h, args.flags);
 }
-extern fn zguiPlot_BeginPlot(title_id: [*:0]const u8, width: f32, height: f32, flags: Flags) bool;
+extern fn zimguiPlot_BeginPlot(title_id: [*:0]const u8, width: f32, height: f32, flags: Flags) bool;
 //----------------------------------------------------------------------------------------------
 pub const LineFlags = packed struct(u32) {
     _reserved0: bool = false,
@@ -359,7 +359,7 @@ fn PlotLineValuesGen(comptime T: type) type {
     };
 }
 pub fn plotLineValues(label_id: [:0]const u8, comptime T: type, args: PlotLineValuesGen(T)) void {
-    zguiPlot_PlotLineValues(
+    zimguiPlot_PlotLineValues(
         label_id,
         gui.typeToDataTypeEnum(T),
         args.v.ptr,
@@ -371,7 +371,7 @@ pub fn plotLineValues(label_id: [:0]const u8, comptime T: type, args: PlotLineVa
         args.stride,
     );
 }
-extern fn zguiPlot_PlotLineValues(
+extern fn zimguiPlot_PlotLineValues(
     label_id: [*:0]const u8,
     data_type: gui.DataType,
     values: *const anyopaque,
@@ -394,7 +394,7 @@ fn PlotLineGen(comptime T: type) type {
 }
 pub fn plotLine(label_id: [:0]const u8, comptime T: type, args: PlotLineGen(T)) void {
     assert(args.xv.len == args.yv.len);
-    zguiPlot_PlotLine(
+    zimguiPlot_PlotLine(
         label_id,
         gui.typeToDataTypeEnum(T),
         args.xv.ptr,
@@ -405,7 +405,7 @@ pub fn plotLine(label_id: [:0]const u8, comptime T: type, args: PlotLineGen(T)) 
         args.stride,
     );
 }
-extern fn zguiPlot_PlotLine(
+extern fn zimguiPlot_PlotLine(
     label_id: [*:0]const u8,
     data_type: gui.DataType,
     xv: *const anyopaque,
@@ -441,7 +441,7 @@ fn PlotScatterValuesGen(comptime T: type) type {
     };
 }
 pub fn plotScatterValues(label_id: [:0]const u8, comptime T: type, args: PlotScatterValuesGen(T)) void {
-    zguiPlot_PlotScatterValues(
+    zimguiPlot_PlotScatterValues(
         label_id,
         gui.typeToDataTypeEnum(T),
         args.v.ptr,
@@ -453,7 +453,7 @@ pub fn plotScatterValues(label_id: [:0]const u8, comptime T: type, args: PlotSca
         args.stride,
     );
 }
-extern fn zguiPlot_PlotScatterValues(
+extern fn zimguiPlot_PlotScatterValues(
     label_id: [*:0]const u8,
     data_type: gui.DataType,
     values: *const anyopaque,
@@ -476,7 +476,7 @@ fn PlotScatterGen(comptime T: type) type {
 }
 pub fn plotScatter(label_id: [:0]const u8, comptime T: type, args: PlotScatterGen(T)) void {
     assert(args.xv.len == args.yv.len);
-    zguiPlot_PlotScatter(
+    zimguiPlot_PlotScatter(
         label_id,
         gui.typeToDataTypeEnum(T),
         args.xv.ptr,
@@ -487,7 +487,7 @@ pub fn plotScatter(label_id: [:0]const u8, comptime T: type, args: PlotScatterGe
         args.stride,
     );
 }
-extern fn zguiPlot_PlotScatter(
+extern fn zimguiPlot_PlotScatter(
     label_id: [*:0]const u8,
     data_type: gui.DataType,
     xv: *const anyopaque,
@@ -513,7 +513,7 @@ fn PlotShadedGen(comptime T: type) type {
 }
 pub fn plotShaded(label_id: [:0]const u8, comptime T: type, args: PlotShadedGen(T)) void {
     assert(args.xv.len == args.yv.len);
-    zguiPlot_PlotShaded(
+    zimguiPlot_PlotShaded(
         label_id,
         gui.typeToDataTypeEnum(T),
         args.xv.ptr,
@@ -525,7 +525,7 @@ pub fn plotShaded(label_id: [:0]const u8, comptime T: type, args: PlotShadedGen(
         args.stride,
     );
 }
-extern fn zguiPlot_PlotShaded(
+extern fn zimguiPlot_PlotShaded(
     label_id: [*:0]const u8,
     data_type: gui.DataType,
     xv: *const anyopaque,
@@ -552,7 +552,7 @@ const DragPoint = struct {
     flags: DragToolFlags = .{},
 };
 pub fn dragPoint(id: i32, args: DragPoint) bool {
-    return zguiPlot_DragPoint(
+    return zimguiPlot_DragPoint(
         id,
         args.x,
         args.y,
@@ -561,7 +561,7 @@ pub fn dragPoint(id: i32, args: DragPoint) bool {
         args.flags,
     );
 }
-extern fn zguiPlot_DragPoint(id: i32, x: *f64, y: *f64, *const [4]f32, size: f32, flags: DragToolFlags) bool;
+extern fn zimguiPlot_DragPoint(id: i32, x: *f64, y: *f64, *const [4]f32, size: f32, flags: DragToolFlags) bool;
 //----------------------------------------------------------------------------------------------
 // PlotText
 const PlotTextFlags = packed struct(u32) {
@@ -575,9 +575,9 @@ const PlotText = struct {
     flags: PlotTextFlags = .{},
 };
 pub fn plotText(text: [*:0]const u8, args: PlotText) void {
-    zguiPlot_PlotText(text, args.x, args.y, &args.pix_offset, args.flags);
+    zimguiPlot_PlotText(text, args.x, args.y, &args.pix_offset, args.flags);
 }
-extern fn zguiPlot_PlotText(
+extern fn zimguiPlot_PlotText(
     text: [*:0]const u8,
     x: f64,
     y: f64,
@@ -587,10 +587,10 @@ extern fn zguiPlot_PlotText(
 
 //----------------------------------------------------------------------------------------------
 /// `pub fn showDemoWindow(popen: ?*bool) void`
-pub const showDemoWindow = zguiPlot_ShowDemoWindow;
-extern fn zguiPlot_ShowDemoWindow(popen: ?*bool) void;
+pub const showDemoWindow = zimguiPlot_ShowDemoWindow;
+extern fn zimguiPlot_ShowDemoWindow(popen: ?*bool) void;
 //----------------------------------------------------------------------------------------------
 /// `pub fn endPlot() void`
-pub const endPlot = zguiPlot_EndPlot;
-extern fn zguiPlot_EndPlot() void;
+pub const endPlot = zimguiPlot_EndPlot;
+extern fn zimguiPlot_EndPlot() void;
 //----------------------------------------------------------------------------------------------

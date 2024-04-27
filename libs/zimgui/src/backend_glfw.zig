@@ -1,4 +1,4 @@
-const gui = @import("gui.zig");
+const gui = @import("zimgui.zig");
 
 // This call will install GLFW callbacks to handle GUI interactions.
 // Those callbacks will chain-call user's previously installed callbacks, if any.

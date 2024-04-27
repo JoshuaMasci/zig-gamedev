@@ -46,9 +46,9 @@ pub fn build(b: *std.Build) void {
     const options_module = options_step.createModule();
 
     _ = b.addModule("root", .{
-        .root_source_file = .{ .path = "src/gui.zig" },
+        .root_source_file = .{ .path = "src/zimgui.zig" },
         .imports = &.{
-            .{ .name = "zgui_options", .module = options_module },
+            .{ .name = "zimgui_options", .module = options_module },
         },
     });
 
@@ -65,7 +65,7 @@ pub fn build(b: *std.Build) void {
         if (target.result.os.tag == .windows) {
             lib.defineCMacro("IMGUI_API", "__declspec(dllexport)");
             lib.defineCMacro("IMPLOT_API", "__declspec(dllexport)");
-            lib.defineCMacro("ZGUI_API", "__declspec(dllexport)");
+            lib.defineCMacro("ZIMGUI_API", "__declspec(dllexport)");
         }
 
         if (target.result.os.tag == .macos) {
@@ -89,7 +89,7 @@ pub fn build(b: *std.Build) void {
         imgui.linkLibCpp();
 
     imgui.addCSourceFile(.{
-        .file = .{ .path = "src/zgui.cpp" },
+        .file = .{ .path = "src/zimgui.cpp" },
         .flags = cflags,
     });
 
@@ -105,7 +105,7 @@ pub fn build(b: *std.Build) void {
     });
 
     if (options.with_implot) {
-        imgui.defineCMacro("ZGUI_IMPLOT", "1");
+        imgui.defineCMacro("ZIMGUI_IMPLOT", "1");
         imgui.addCSourceFiles(.{
             .files = &.{
                 "libs/imgui/implot_demo.cpp",
@@ -115,7 +115,7 @@ pub fn build(b: *std.Build) void {
             .flags = cflags,
         });
     } else {
-        imgui.defineCMacro("ZGUI_IMPLOT", "0");
+        imgui.defineCMacro("ZIMGUI_IMPLOT", "0");
     }
 
     if (options.use_wchar32) {
@@ -123,7 +123,7 @@ pub fn build(b: *std.Build) void {
     }
 
     if (options.with_te) {
-        imgui.defineCMacro("ZGUI_TE", "1");
+        imgui.defineCMacro("ZIMGUI_TE", "1");
 
         imgui.defineCMacro("IMGUI_ENABLE_TEST_ENGINE", null);
         imgui.defineCMacro("IMGUI_TEST_ENGINE_ENABLE_COROUTINE_STDTHREAD_IMPL", "1");
@@ -182,7 +182,7 @@ pub fn build(b: *std.Build) void {
             imgui.addSystemIncludePath(.{ .path = "libs/winpthreads/include" });
         }
     } else {
-        imgui.defineCMacro("ZGUI_TE", "0");
+        imgui.defineCMacro("ZIMGUI_TE", "0");
     }
 
     switch (options.backend) {
@@ -260,17 +260,17 @@ pub fn build(b: *std.Build) void {
         .no_backend => {},
     }
 
-    const test_step = b.step("test", "Run zgui tests");
+    const test_step = b.step("test", "Run zimgui tests");
 
     const tests = b.addTest(.{
-        .name = "zgui-tests",
+        .name = "zimgui-tests",
         .root_source_file = .{ .path = "src/gui.zig" },
         .target = target,
         .optimize = optimize,
     });
     b.installArtifact(tests);
 
-    tests.root_module.addImport("zgui_options", options_module);
+    tests.root_module.addImport("zimgui_options", options_module);
     tests.linkLibrary(imgui);
 
     test_step.dependOn(&b.addRunArtifact(tests).step);

@@ -1,6 +1,6 @@
 const std = @import("std");
 
-const gui = @import("gui.zig");
+const gui = @import("zimgui.zig");
 const backend_dx12 = @import("backend_dx12.zig");
 
 pub fn init(

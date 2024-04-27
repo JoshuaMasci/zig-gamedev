@@ -199,12 +199,12 @@ fn tests(
     });
     test_step.dependOn(&b.addRunArtifact(zgpu.artifact("zgpu-tests")).step);
 
-    const zgui = b.dependency("zgui", .{
+    const zimgui = b.dependency("zimgui", .{
         .target = target,
         .optimize = optimize,
         .with_te = true,
     });
-    test_step.dependOn(&b.addRunArtifact(zgui.artifact("zgui-tests")).step);
+    test_step.dependOn(&b.addRunArtifact(zimgui.artifact("zimgui-tests")).step);
 
     const zmath = b.dependency("zmath", .{
         .target = target,

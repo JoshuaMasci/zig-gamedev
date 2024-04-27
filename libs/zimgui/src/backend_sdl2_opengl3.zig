@@ -1,4 +1,4 @@
-const gui = @import("gui.zig");
+const gui = @import("zimgui.zig");
 
 pub fn init(
     window: *const anyopaque,

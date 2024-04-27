@@ -1,6 +1,6 @@
-# zgui v0.2.0 - dear imgui bindings
+# zimgui v0.2.0 - dear imgui bindings
 
-Easy to use, hand-crafted API with default arguments, named parameters and Zig style text formatting. [Here](https://github.com/michal-z/zig-gamedev/tree/main/samples/minimal_zgpu_zgui) is a simple sample application, and [here](https://github.com/michal-z/zig-gamedev/tree/main/samples/gui_test_wgpu) is a full one.
+Easy to use, hand-crafted API with default arguments, named parameters and Zig style text formatting. [Here](https://github.com/michal-z/zig-gamedev/tree/main/samples/minimal_zgpu_zimgui) is a simple sample application, and [here](https://github.com/michal-z/zig-gamedev/tree/main/samples/gui_test_wgpu) is a full one.
 
 ## Features
 
@@ -18,9 +18,9 @@ Easy to use, hand-crafted API with default arguments, named parameters and Zig s
 
 ## Getting started
 
-Copy `zgui` to a subdirectory in your project and add the following to your `build.zig.zon` .dependencies:
+Copy `zimgui` to a subdirectory in your project and add the following to your `build.zig.zon` .dependencies:
 ```zig
-    .zgui = .{ .path = "libs/zgui" },
+    .zimgui = .{ .path = "libs/zimgui" },
 ```
 
 To get glfw/wgpu rendering backend working also copy `zglfw`, `system-sdk`, `zgpu` and `zpool` folders and add the depenency paths (see [zgpu](https://github.com/zig-gamedev/zig-gamedev/tree/main/libs/zgpu) for the details).
@@ -31,12 +31,12 @@ Then in your `build.zig` add:
 pub fn build(b: *std.Build) void {
     const exe = b.addExecutable(.{ ... });
 
-    const zgui = b.dependency("zgui", .{
+    const zimgui = b.dependency("zimgui", .{
         .shared = false,
         .with_implot = true,
     });
-    exe.root_module.addImport("zgui", zgui.module("root"));
-    exe.linkLibrary(zgui.artifact("imgui"));
+    exe.root_module.addImport("zimgui", zimgui.module("root"));
+    exe.linkLibrary(zimgui.artifact("imgui"));
     
     { // Needed for glfw/wgpu rendering backend
         const zglfw = b.dependency("zglfw", .{});
@@ -53,16 +53,16 @@ pub fn build(b: *std.Build) void {
 }
 ```
 
-Now in your code you may import and use `zgui`:
+Now in your code you may import and use `zimgui`:
 
 ```zig
-const zgui = @import("zgui");
+const zimgui = @import("zimgui");
 
-zgui.init(allocator);
+zimgui.init(allocator);
 
-_ = zgui.io.addFontFromFile(content_dir ++ "Roboto-Medium.ttf", 16.0);
+_ = zimgui.io.addFontFromFile(content_dir ++ "Roboto-Medium.ttf", 16.0);
 
-zgui.backend.init(
+zimgui.backend.init(
     window,
     demo.gctx.device,
     @enumToInt(swapchain_format),
@@ -73,51 +73,51 @@ zgui.backend.init(
 ```zig
 // Main loop
 while (...) {
-    zgui.backend.newFrame(framebuffer_width, framebuffer_height);
+    zimgui.backend.newFrame(framebuffer_width, framebuffer_height);
 
-    zgui.bulletText(
+    zimgui.bulletText(
         "Average :  {d:.3} ms/frame ({d:.1} fps)",
         .{ demo.gctx.stats.average_cpu_time, demo.gctx.stats.fps },
     );
-    zgui.bulletText("W, A, S, D :  move camera", .{});
-    zgui.spacing();
+    zimgui.bulletText("W, A, S, D :  move camera", .{});
+    zimgui.spacing();
 
-    if (zgui.button("Setup Scene", .{})) {
+    if (zimgui.button("Setup Scene", .{})) {
         // Button pressed.
     }
 
-    if (zgui.dragFloat("Drag 1", .{ .v = &value0 })) {
+    if (zimgui.dragFloat("Drag 1", .{ .v = &value0 })) {
         // value0 has changed
     }
 
-    if (zgui.dragFloat("Drag 2", .{ .v = &value0, .min = -1.0, .max = 1.0 })) {
+    if (zimgui.dragFloat("Drag 2", .{ .v = &value0, .min = -1.0, .max = 1.0 })) {
         // value1 has changed
     }
 
     // Setup wgpu render pass here
 
-    zgui.backend.draw(pass);
+    zimgui.backend.draw(pass);
 }
 ```
 
 ### Building a shared library
 
-If your project spans multiple zig modules that both use ImGui, such as an exe paired with a dll, you may want to build the `zgui` dependencies (`zgui_pkg.zgui_c_cpp`) as a shared library. This can be enabled with the `shared` build option. Then, in `build.zig`, use `zgui_pkg.link` to link `zgui` to all the modules that use ImGui.
+If your project spans multiple zig modules that both use ImGui, such as an exe paired with a dll, you may want to build the `zimgui` dependencies (`zimgui_pkg.zimgui_c_cpp`) as a shared library. This can be enabled with the `shared` build option. Then, in `build.zig`, use `zimgui_pkg.link` to link `zimgui` to all the modules that use ImGui.
 
-When built this way, the ImGui context will be located in the shared library. However, the `zgui` zig code (which is compiled separately into each module) requires its own memory buffer which has to be initialized separately with `initNoContext`.
+When built this way, the ImGui context will be located in the shared library. However, the `zimgui` zig code (which is compiled separately into each module) requires its own memory buffer which has to be initialized separately with `initNoContext`.
 
 In your executable:
 ```zig
-const zgui = @import("zgui");
-zgui.init(allocator);
-defer zgui.deinit();
+const zimgui = @import("zimgui");
+zimgui.init(allocator);
+defer zimgui.deinit();
 ```
 
 In your shared library:
 ```zig
-const zgui = @import("zgui");
-zgui.initNoContext(allocator);
-defer zgui.deinitNoContxt();
+const zimgui = @import("zimgui");
+zimgui.initNoContext(allocator);
+defer zimgui.deinitNoContxt();
 ```
 
 ### DrawList API
@@ -141,17 +141,17 @@ draw_list.addPolyline(
 ```
 ### Plot API
 ```zig
-if (zgui.plot.beginPlot("Line Plot", .{ .h = -1.0 })) {
-    zgui.plot.setupAxis(.x1, .{ .label = "xaxis" });
-    zgui.plot.setupAxisLimits(.x1, .{ .min = 0, .max = 5 });
-    zgui.plot.setupLegend(.{ .south = true, .west = true }, .{});
-    zgui.plot.setupFinish();
-    zgui.plot.plotLineValues("y data", i32, .{ .v = &.{ 0, 1, 0, 1, 0, 1 } });
-    zgui.plot.plotLine("xy data", f32, .{
+if (zimgui.plot.beginPlot("Line Plot", .{ .h = -1.0 })) {
+    zimgui.plot.setupAxis(.x1, .{ .label = "xaxis" });
+    zimgui.plot.setupAxisLimits(.x1, .{ .min = 0, .max = 5 });
+    zimgui.plot.setupLegend(.{ .south = true, .west = true }, .{});
+    zimgui.plot.setupFinish();
+    zimgui.plot.plotLineValues("y data", i32, .{ .v = &.{ 0, 1, 0, 1, 0, 1 } });
+    zimgui.plot.plotLine("xy data", f32, .{
         .xv = &.{ 0.1, 0.2, 0.5, 2.5 },
         .yv = &.{ 0.1, 0.3, 0.5, 0.9 },
     });
-    zgui.plot.endPlot();
+    zimgui.plot.endPlot();
 }
 ```
 
@@ -160,28 +160,28 @@ Zig wraper for [ImGUI test engine](https://github.com/ocornut/imgui_test_engine)
 
 ```zig
 var check_b = false;
-var _te: *zgui.te.TestEngine = zgui.te.getTestEngine().?;
+var _te: *zimgui.te.TestEngine = zimgui.te.getTestEngine().?;
 fn registerTests() void {
     _ = _te.registerTest(
         "Awesome",
         "should_do_some_another_magic",
         @src(),
         struct {
-            pub fn gui(ctx: *zgui.te.TestContext) !void {
+            pub fn gui(ctx: *zimgui.te.TestContext) !void {
                 _ = ctx; // autofix
-                _ = zgui.begin("Test Window", .{ .flags = .{ .no_saved_settings = true } });
-                defer zgui.end();
+                _ = zimgui.begin("Test Window", .{ .flags = .{ .no_saved_settings = true } });
+                defer zimgui.end();
 
-                zgui.text("Hello, automation world", .{});
-                _ = zgui.button("Click Me", .{});
-                if (zgui.treeNode("Node")) {
-                    defer zgui.treePop();
+                zimgui.text("Hello, automation world", .{});
+                _ = zimgui.button("Click Me", .{});
+                if (zimgui.treeNode("Node")) {
+                    defer zimgui.treePop();
 
-                    _ = zgui.checkbox("Checkbox", .{ .v = &check_b });
+                    _ = zimgui.checkbox("Checkbox", .{ .v = &check_b });
                 }
             }
 
-            pub fn run(ctx: *zgui.te.TestContext) !void {
+            pub fn run(ctx: *zimgui.te.TestContext) !void {
                 ctx.setRef("/Test Window");
                 ctx.windowFocus("");
 
@@ -191,7 +191,7 @@ fn registerTests() void {
                 ctx.itemAction(.uncheck, "Node/Checkbox", .{}, null);
 
                 std.testing.expect(true) catch |err| {
-                    zgui.te.checkTestError(@src(), err);
+                    zimgui.te.checkTestError(@src(), err);
                     return;
                 };
             }

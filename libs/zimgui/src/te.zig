@@ -1,6 +1,6 @@
 const std = @import("std");
-const zgui = @import("gui.zig");
-const te_enabled = @import("zgui_options").with_te;
+const zimgui = @import("zimgui.zig");
+const te_enabled = @import("zimgui_options").with_te;
 
 pub const Actions = enum(c_int) {
     unknown = 0,
@@ -89,7 +89,7 @@ pub const TestEngine = opaque {
         src: std.builtin.SourceLocation,
         comptime Callbacks: type,
     ) *Test {
-        return zguiTe_RegisterTest(
+        return zimguiTe_RegisterTest(
             engine,
             category.ptr,
             name.ptr,
@@ -114,115 +114,115 @@ pub const TestEngine = opaque {
         );
     }
 
-    pub const showTestEngineWindows = zguiTe_ShowTestEngineWindows;
-    extern fn zguiTe_ShowTestEngineWindows(engine: *TestEngine, p_open: ?*bool) void;
+    pub const showTestEngineWindows = zimguiTe_ShowTestEngineWindows;
+    extern fn zimguiTe_ShowTestEngineWindows(engine: *TestEngine, p_open: ?*bool) void;
 
-    pub const setRunSpeed = zguiTe_EngineSetRunSpeed;
-    extern fn zguiTe_EngineSetRunSpeed(engine: *TestEngine, speed: RunSpeed) void;
+    pub const setRunSpeed = zimguiTe_EngineSetRunSpeed;
+    extern fn zimguiTe_EngineSetRunSpeed(engine: *TestEngine, speed: RunSpeed) void;
 
-    pub const stop = zguiTe_Stop;
-    extern fn zguiTe_Stop(engine: *TestEngine) void;
+    pub const stop = zimguiTe_Stop;
+    extern fn zimguiTe_Stop(engine: *TestEngine) void;
 
-    pub const tryAbortEngine = zguiTe_TryAbortEngine;
-    extern fn zguiTe_TryAbortEngine(engine: *TestEngine) void;
+    pub const tryAbortEngine = zimguiTe_TryAbortEngine;
+    extern fn zimguiTe_TryAbortEngine(engine: *TestEngine) void;
 
-    pub const postSwap = zguiTe_PostSwap;
-    extern fn zguiTe_PostSwap(engine: *TestEngine) void;
+    pub const postSwap = zimguiTe_PostSwap;
+    extern fn zimguiTe_PostSwap(engine: *TestEngine) void;
 
-    pub const isTestQueueEmpty = zguiTe_IsTestQueueEmpty;
-    extern fn zguiTe_IsTestQueueEmpty(engine: *TestEngine) bool;
+    pub const isTestQueueEmpty = zimguiTe_IsTestQueueEmpty;
+    extern fn zimguiTe_IsTestQueueEmpty(engine: *TestEngine) bool;
 
-    pub const getResult = zguiTe_GetResult;
-    extern fn zguiTe_GetResult(engine: *TestEngine, count_tested: *c_int, count_success: *c_int) void;
+    pub const getResult = zimguiTe_GetResult;
+    extern fn zimguiTe_GetResult(engine: *TestEngine, count_tested: *c_int, count_success: *c_int) void;
 
-    pub const printResultSummary = zguiTe_PrintResultSummary;
-    extern fn zguiTe_PrintResultSummary(engine: *TestEngine) void;
+    pub const printResultSummary = zimguiTe_PrintResultSummary;
+    extern fn zimguiTe_PrintResultSummary(engine: *TestEngine) void;
 
     pub fn queueTests(engine: *TestEngine, group: TestGroup, filter_str: [:0]const u8, run_flags: TestRunFlags) void {
-        zguiTe_QueueTests(engine, group, filter_str.ptr, run_flags);
+        zimguiTe_QueueTests(engine, group, filter_str.ptr, run_flags);
     }
-    extern fn zguiTe_QueueTests(engine: *TestEngine, group: TestGroup, filter_str: [*]const u8, run_flags: TestRunFlags) void;
+    extern fn zimguiTe_QueueTests(engine: *TestEngine, group: TestGroup, filter_str: [*]const u8, run_flags: TestRunFlags) void;
 
     pub fn exportJunitResult(engine: *TestEngine, filename: [:0]const u8) void {
-        zguiTe_EngineExportJunitResult(engine, filename.ptr);
+        zimguiTe_EngineExportJunitResult(engine, filename.ptr);
     }
-    extern fn zguiTe_EngineExportJunitResult(engine: *TestEngine, filename: [*]const u8) void;
+    extern fn zimguiTe_EngineExportJunitResult(engine: *TestEngine, filename: [*]const u8) void;
 };
 
 pub const TestContext = opaque {
     pub fn setRef(ctx: *TestContext, ref: [:0]const u8) void {
-        return zguiTe_ContextSetRef(ctx, ref.ptr);
+        return zimguiTe_ContextSetRef(ctx, ref.ptr);
     }
 
     pub fn windowFocus(ctx: *TestContext, ref: [:0]const u8) void {
-        return zguiTe_ContextWindowFocus(ctx, ref.ptr);
+        return zimguiTe_ContextWindowFocus(ctx, ref.ptr);
     }
 
     pub fn yield(ctx: *TestContext, frame_count: i32) void {
-        return zguiTe_ContextYield(ctx, frame_count);
+        return zimguiTe_ContextYield(ctx, frame_count);
     }
 
     pub fn itemAction(ctx: *TestContext, action: Actions, ref: [:0]const u8, flags: TestOpFlags, action_arg: ?*anyopaque) void {
-        return zguiTe_ContextItemAction(ctx, action, ref.ptr, flags, action_arg);
+        return zimguiTe_ContextItemAction(ctx, action, ref.ptr, flags, action_arg);
     }
 
     pub fn itemInputStrValue(ctx: *TestContext, ref: [:0]const u8, value: [:0]const u8) void {
-        return zguiTe_ContextItemInputStrValue(ctx, ref.ptr, value.ptr);
+        return zimguiTe_ContextItemInputStrValue(ctx, ref.ptr, value.ptr);
     }
 
     pub fn itemInputIntValue(ctx: *TestContext, ref: [:0]const u8, value: i32) void {
-        return zguiTe_ContextItemInputIntValue(ctx, ref.ptr, value);
+        return zimguiTe_ContextItemInputIntValue(ctx, ref.ptr, value);
     }
 
     pub fn itemInputFloatValue(ctx: *TestContext, ref: [:0]const u8, value: f32) void {
-        return zguiTe_ContextItemInputFloatValue(ctx, ref.ptr, value);
+        return zimguiTe_ContextItemInputFloatValue(ctx, ref.ptr, value);
     }
 
     pub fn menuAction(ctx: *TestContext, action: Actions, ref: [*]const u8) void {
-        return zguiTe_ContextMenuAction(ctx, action, ref);
+        return zimguiTe_ContextMenuAction(ctx, action, ref);
     }
 
-    pub fn dragAndDrop(ctx: *TestContext, ref_src: [:0]const u8, ref_dst: [:0]const u8, button: zgui.MouseButton) void {
-        return zguiTe_ContextDragAndDrop(ctx, ref_src.ptr, ref_dst.ptr, button);
+    pub fn dragAndDrop(ctx: *TestContext, ref_src: [:0]const u8, ref_dst: [:0]const u8, button: zimgui.MouseButton) void {
+        return zimguiTe_ContextDragAndDrop(ctx, ref_src.ptr, ref_dst.ptr, button);
     }
 
     pub fn keyDown(ctx: *TestContext, key_chord: c_int) void {
-        return zguiTe_ContextKeyDown(ctx, key_chord);
+        return zimguiTe_ContextKeyDown(ctx, key_chord);
     }
 
     pub fn keyUp(ctx: *TestContext, key_chord: c_int) void {
-        return zguiTe_ContextKeyUp(ctx, key_chord);
+        return zimguiTe_ContextKeyUp(ctx, key_chord);
     }
 
-    extern fn zguiTe_ContextSetRef(ctx: *TestContext, ref: [*]const u8) void;
-    extern fn zguiTe_ContextWindowFocus(ctx: *TestContext, ref: [*]const u8) void;
-    extern fn zguiTe_ContextYield(ctx: *TestContext, frame_count: c_int) void;
-    extern fn zguiTe_ContextMenuAction(ctx: *TestContext, action: Actions, ref: [*]const u8) void;
-    extern fn zguiTe_ContextItemAction(ctx: *TestContext, action: Actions, ref: [*]const u8, flags: TestOpFlags, action_arg: ?*anyopaque) void;
-    extern fn zguiTe_ContextItemInputStrValue(ctx: *TestContext, ref: [*]const u8, value: [*]const u8) void;
-    extern fn zguiTe_ContextItemInputIntValue(ctx: *TestContext, ref: [*]const u8, value: i32) void;
-    extern fn zguiTe_ContextItemInputFloatValue(ctx: *TestContext, ref: [*]const u8, value: f32) void;
-    extern fn zguiTe_ContextDragAndDrop(ctx: *TestContext, ref_src: [*]const u8, ref_dst: [*]const u8, button: zgui.MouseButton) void;
-    extern fn zguiTe_ContextKeyDown(ctx: *TestContext, key_chord: c_int) void;
-    extern fn zguiTe_ContextKeyUp(ctx: *TestContext, key_chord: c_int) void;
+    extern fn zimguiTe_ContextSetRef(ctx: *TestContext, ref: [*]const u8) void;
+    extern fn zimguiTe_ContextWindowFocus(ctx: *TestContext, ref: [*]const u8) void;
+    extern fn zimguiTe_ContextYield(ctx: *TestContext, frame_count: c_int) void;
+    extern fn zimguiTe_ContextMenuAction(ctx: *TestContext, action: Actions, ref: [*]const u8) void;
+    extern fn zimguiTe_ContextItemAction(ctx: *TestContext, action: Actions, ref: [*]const u8, flags: TestOpFlags, action_arg: ?*anyopaque) void;
+    extern fn zimguiTe_ContextItemInputStrValue(ctx: *TestContext, ref: [*]const u8, value: [*]const u8) void;
+    extern fn zimguiTe_ContextItemInputIntValue(ctx: *TestContext, ref: [*]const u8, value: i32) void;
+    extern fn zimguiTe_ContextItemInputFloatValue(ctx: *TestContext, ref: [*]const u8, value: f32) void;
+    extern fn zimguiTe_ContextDragAndDrop(ctx: *TestContext, ref_src: [*]const u8, ref_dst: [*]const u8, button: zimgui.MouseButton) void;
+    extern fn zimguiTe_ContextKeyDown(ctx: *TestContext, key_chord: c_int) void;
+    extern fn zimguiTe_ContextKeyUp(ctx: *TestContext, key_chord: c_int) void;
 };
 
 const ImGuiTestGuiFunc = fn (context: *TestContext) callconv(.C) void;
 const ImGuiTestTestFunc = fn (context: *TestContext) callconv(.C) void;
 
-pub const createContext = zguiTe_CreateContext;
-extern fn zguiTe_CreateContext() *TestEngine;
+pub const createContext = zimguiTe_CreateContext;
+extern fn zimguiTe_CreateContext() *TestEngine;
 
-pub const destroyContext = zguiTe_DestroyContext;
-extern fn zguiTe_DestroyContext(engine: *TestEngine) void;
+pub const destroyContext = zimguiTe_DestroyContext;
+extern fn zimguiTe_DestroyContext(engine: *TestEngine) void;
 
-extern fn zguiTe_Check(filename: [*]const u8, func: [*]const u8, line: u32, flags: CheckFlags, resul: bool, expr: [*]const u8) bool;
+extern fn zimguiTe_Check(filename: [*]const u8, func: [*]const u8, line: u32, flags: CheckFlags, resul: bool, expr: [*]const u8) bool;
 
 pub fn check(src: std.builtin.SourceLocation, flags: CheckFlags, resul: bool, expr: [:0]const u8) bool {
-    return zguiTe_Check(src.file.ptr, src.fn_name.ptr, src.line, flags, resul, expr.ptr);
+    return zimguiTe_Check(src.file.ptr, src.fn_name.ptr, src.line, flags, resul, expr.ptr);
 }
 
-pub extern fn zguiTe_RegisterTest(
+pub extern fn zimguiTe_RegisterTest(
     engine: *TestEngine,
     category: [*]const u8,
     name: [*]const u8,
@@ -238,7 +238,7 @@ pub fn checkTestError(
 ) void {
     var buff: [128:0]u8 = undefined;
     const msg = std.fmt.bufPrintZ(&buff, "Assert error: {}", .{err}) catch undefined;
-    _ = zguiTe_Check(src.file.ptr, src.fn_name.ptr, src.line, .{}, false, msg.ptr);
+    _ = zimguiTe_Check(src.file.ptr, src.fn_name.ptr, src.line, .{}, false, msg.ptr);
 }
 
 var _te_engine: ?*TestEngine = null;

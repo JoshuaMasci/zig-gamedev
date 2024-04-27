@@ -18,7 +18,7 @@
         .zflecs = .{ .path = "libs/zflecs" },
         .zglfw = .{ .path = "libs/zglfw" },
         .zgpu = .{ .path = "libs/zgpu" },
-        .zgui = .{ .path = "libs/zgui" },
+        .zimgui = .{ .path = "libs/zimgui" },
         .zjobs = .{ .path = "libs/zjobs" },
         .zmath = .{ .path = "libs/zmath" },
         .zmesh = .{ .path = "libs/zmesh" },

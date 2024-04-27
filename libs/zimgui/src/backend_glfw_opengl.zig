@@ -1,4 +1,4 @@
-const gui = @import("gui.zig");
+const gui = @import("zimgui.zig");
 const backend_glfw = @import("backend_glfw.zig");
 
 pub fn initWithGlSlVersion(
