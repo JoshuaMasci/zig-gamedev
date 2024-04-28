@@ -13,6 +13,7 @@ pub const backend = switch (@import("zimgui_options").backend) {
     .glfw => @import("backend_glfw.zig"),
     .win32_dx12 => @import("backend_win32_dx12.zig"),
     .sdl2_opengl3 => @import("backend_sdl2_opengl3.zig"),
+    .sdl3_opengl3 => @import("backend_sdl3_opengl3.zig"),
     .no_backend => .{},
 };
 const te_enabled = @import("zimgui_options").with_te;

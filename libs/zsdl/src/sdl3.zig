@@ -107,18 +107,10 @@ pub const Version = extern struct {
     patch: u8,
 };
 
-/// Compiled SDL version
-pub const VERSION = Version{
-    .major = 3,
-    .minor = 0,
-    .patch = 0,
-};
-
 /// Returns the linked SDL version
 pub fn getVersion() Version {
     var version: Version = undefined;
     SDL_GetVersion(&version);
-
     return version;
 }
 extern fn SDL_GetVersion(version: *Version) void;
