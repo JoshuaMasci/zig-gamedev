@@ -739,6 +739,74 @@ pub const Data = extern struct {
     pub fn writeBuffer(data: Data, buffer: []u8, options: Options) usize {
         return cgltf_write(&options, buffer.ptr, buffer.len, &data);
     }
+
+    pub fn mesh_index(data: Data, mesh_opt: ?*Mesh) ?usize {
+        if (mesh_opt) |mesh| {
+            if (data.meshes) |meshes| {
+                const mesh_ptr: usize = @intFromPtr(mesh);
+                const meshes_ptr: usize = @intFromPtr(meshes);
+                if (mesh_ptr >= meshes_ptr) {
+                    const size = @sizeOf(Mesh);
+                    const index = (mesh_ptr - meshes_ptr) / size;
+                    if (index < data.meshes_count) {
+                        return index;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    pub fn image_index(data: Data, image_opt: ?*Image) ?usize {
+        if (image_opt) |image| {
+            if (data.images) |images| {
+                const image_ptr: usize = @intFromPtr(image);
+                const images_ptr: usize = @intFromPtr(images);
+                if (image_ptr >= images_ptr) {
+                    const size = @sizeOf(Image);
+                    const index = (image_ptr - images_ptr) / size;
+                    if (index < data.images_count) {
+                        return index;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    pub fn texture_index(data: Data, texture_opt: ?*Texture) ?usize {
+        if (texture_opt) |texture| {
+            if (data.textures) |textures| {
+                const texture_ptr: usize = @intFromPtr(texture);
+                const textures_ptr: usize = @intFromPtr(textures);
+                if (texture_ptr >= textures_ptr) {
+                    const size = @sizeOf(Texture);
+                    const index = (texture_ptr - textures_ptr) / size;
+                    if (index < data.textures_count) {
+                        return index;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    pub fn sampler_index(data: Data, sampler_opt: ?*Sampler) ?usize {
+        if (sampler_opt) |sampler| {
+            if (data.samplers) |samplers| {
+                const sampler_ptr: usize = @intFromPtr(sampler);
+                const samplers_ptr: usize = @intFromPtr(samplers);
+                if (sampler_ptr >= samplers_ptr) {
+                    const size = @sizeOf(Sampler);
+                    const index = (sampler_ptr - samplers_ptr) / size;
+                    if (index < data.samplers_count) {
+                        return index;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 };
 
 pub const Error = error{
