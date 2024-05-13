@@ -1383,6 +1383,11 @@ pub const Keysym = extern struct {
     unused: u32,
 };
 
+pub fn hasKeyboard() bool {
+    return SDL_HasKeyboard() != 0;
+}
+extern fn SDL_HasKeyboard() u8;
+
 pub fn getKeyboardState() []const u8 {
     var numkeys: i32 = 0;
     const ptr = SDL_GetKeyboardState(&numkeys).?;
@@ -1402,6 +1407,11 @@ pub const MouseWheelDirection = enum(u32) {
     flipped,
 };
 
+pub fn hasMouse() bool {
+    return SDL_HasMouse() != 0;
+}
+extern fn SDL_HasMouse() u8;
+
 pub const getMouseFocus = SDL_GetMouseFocus;
 extern fn SDL_GetMouseFocus() ?*Window;
 
@@ -1417,6 +1427,18 @@ pub fn hideCursor() Error!void {
     if (SDL_HideCursor() < 0) return makeError();
 }
 extern fn SDL_HideCursor() c_int;
+
+pub fn setRelativeMouseMode(enabled: bool) Error!void {
+    if (SDL_SetRelativeMouseMode(if (enabled) 1 else 0) < 0) {
+        return makeError();
+    }
+}
+extern fn SDL_SetRelativeMouseMode(enabled: u8) c_int;
+
+pub fn getRelativeMouseMode() bool {
+    return SDL_GetRelativeMouseMode() != 0;
+}
+extern fn SDL_GetRelativeMouseMode() u8;
 
 //--------------------------------------------------------------------------------------------------
 //
