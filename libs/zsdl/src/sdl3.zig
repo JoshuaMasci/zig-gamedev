@@ -1104,20 +1104,18 @@ pub const EventType = enum(u32) {
     will_enter_background,
     did_enter_background,
     will_enter_foreground,
-    enter_foreground,
+    did_enter_foreground,
     locale_changed,
     system_theme_changed,
 
-    _reserved_sdl2compat_displayevent = 0x150,
-    display_orientation,
-    display_connected,
-    display_disconnected,
+    display_orientation = 0x151,
+    display_added,
+    display_removed,
     display_moved,
     display_content_scale_changed,
+    display_hdr_state_changed,
 
-    _reserved_sdl2compat_windowevent = 0x200,
-    syswm,
-    window_shown,
+    window_shown = 0x202,
     window_hidden,
     window_exposed,
     window_moved,
@@ -1136,22 +1134,30 @@ pub const EventType = enum(u32) {
     window_iccprof_changed,
     window_display_changed,
     window_display_scale_changed,
+    window_occluded,
+    window_enter_fullscreen,
+    window_leave_fullscreen,
     window_destroyed,
+    window_pen_enter,
+    window_pen_leave,
 
     key_down = 0x300,
     key_up,
     text_editing,
     text_input,
     keymap_changed,
-    text_editing_ext,
+    keyboard_added,
+    keyboard_removed,
 
     mouse_motion = 0x400,
     mouse_button_down,
     mouse_button_up,
     mouse_wheel,
+    mouse_added,
+    mouse_removed,
 
     joystick_axis_motion = 0x600,
-    _reserved_sdl2compat_joyballmotion,
+    joystick_ball_motion,
     joystick_hat_motion,
     joystick_button_down,
     joystick_button_up,
@@ -1171,14 +1177,11 @@ pub const EventType = enum(u32) {
     gamepad_touchpad_up,
     gamepad_sensor_update,
     gamepad_update_complete,
+    gamepad_steam_handle_updated,
 
     finger_down = 0x700,
     finger_up,
     finger_motion,
-
-    _reserved_sdl2compat_dollargesture = 0x800,
-    _reserved_sdl2compat_dollarrecord,
-    _reserved_sdl2compat_multigesture,
 
     clipboard_update = 0x900,
 
@@ -1186,11 +1189,24 @@ pub const EventType = enum(u32) {
     drop_text,
     drop_begin,
     drop_complete,
+    drop_position,
 
     audio_device_added = 0x1100,
     audio_device_removed,
+    audio_device_format_changed,
 
     sensor_update = 0x1200,
+
+    pen_down = 0x1300,
+    pen_up,
+    pen_motion,
+    pen_button_down,
+    pen_button_up,
+
+    camera_device_added = 0x1400,
+    camera_device_removed,
+    camera_device_approved,
+    camera_device_denied,
 
     render_targets_reset = 0x2000,
     render_device_reset,
@@ -1199,7 +1215,7 @@ pub const EventType = enum(u32) {
 
     user = 0x8000,
 
-    lastevent = 0xffff,
+    last = 0xffff,
 
     _,
 };
@@ -1211,11 +1227,13 @@ pub const ReleasedOrPressed = enum(u8) {
 
 pub const CommonEvent = extern struct {
     type: EventType,
+    reserved: u32,
     timestamp: u64,
 };
 
 pub const DisplayEvent = extern struct {
     type: EventType,
+    reserved: u32,
     timestamp: u64,
     display_id: DisplayId,
     data1: i32,
@@ -1223,16 +1241,26 @@ pub const DisplayEvent = extern struct {
 
 pub const WindowEvent = extern struct {
     type: EventType,
+    reserved: u32,
     timestamp: u64,
     window_id: WindowId,
     data1: i32,
     data2: i32,
 };
 
+pub const KeyboardDeviceEvent = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: KeyboardId,
+};
+
 pub const KeyboardEvent = extern struct {
     type: EventType,
+    reserved: u32,
     timestamp: u64,
     window_id: WindowId,
+    which: KeyboardId,
     state: ReleasedOrPressed,
     repeat: u8,
     padding2: u8,
@@ -1242,17 +1270,7 @@ pub const KeyboardEvent = extern struct {
 
 pub const TextEditingEvent = extern struct {
     type: EventType,
-    timestamp: u64,
-    window_id: WindowId,
-    text: [text_size]u8,
-    start: i32,
-    length: i32,
-
-    const text_size = 32;
-};
-
-pub const TextEditingExtEvent = extern struct {
-    type: EventType,
+    reserved: u32,
     timestamp: u64,
     window_id: WindowId,
     text: [*:0]u8,
@@ -1262,15 +1280,22 @@ pub const TextEditingExtEvent = extern struct {
 
 pub const TextInputEvent = extern struct {
     type: EventType,
+    reserved: u32,
     timestamp: u64,
     window_id: WindowId,
-    text: [text_size]u8,
+    text: [*:0]u8,
+};
 
-    const text_size = 32;
+pub const MouseDeviceEvent = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: MouseId,
 };
 
 pub const MouseMotionEvent = extern struct {
     type: EventType,
+    reserved: u32,
     timestamp: u64,
     window_id: WindowId,
     which: MouseId,
@@ -1283,6 +1308,7 @@ pub const MouseMotionEvent = extern struct {
 
 pub const MouseButtonEvent = extern struct {
     type: EventType,
+    reserved: u32,
     timestamp: u64,
     window_id: WindowId,
     which: MouseId,
@@ -1296,23 +1322,149 @@ pub const MouseButtonEvent = extern struct {
 
 pub const MouseWheelEvent = extern struct {
     type: EventType,
+    reserved: u32,
     timestamp: u64,
     window_id: WindowId,
     which: MouseId,
     x: f32,
     y: f32,
     direction: MouseWheelDirection,
-    preciseX: f32,
-    preciseY: f32,
+    mouse_x: f32,
+    mouse_y: f32,
 };
 
-pub const QuitEvent = extern struct {
+pub const JoyAxisEvent = extern struct {
     type: EventType,
+    reserved: u32,
     timestamp: u64,
+    which: JoystickId,
+    axis: u8,
+    padding1: u8,
+    padding2: u8,
+    padding3: u8,
+    value: i16,
+    padding4: u16,
+};
+
+pub const JoyBallEvent = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: JoystickId,
+    ball: u8,
+    padding1: u8,
+    padding2: u8,
+    padding3: u8,
+    x_rel: i16,
+    y_rel: u16,
+};
+
+pub const JoyHatEvent = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: JoystickId,
+    hat: u8,
+    value: u8,
+    padding1: u8,
+    padding2: u8,
+};
+
+pub const JoyButtonEvent = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: JoystickId,
+    button: u8,
+    state: ReleasedOrPressed,
+    padding1: u8,
+    padding2: u8,
+};
+
+pub const JoyDeviceEvent = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: JoystickId,
+};
+
+pub const JoyBatteryEvent = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: JoystickId,
+    state: PowerState,
+    percent: i32,
+};
+
+pub const GamepadAxisEvent = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: JoystickId,
+    axis: u8,
+    padding1: u8,
+    padding2: u8,
+    padding3: u8,
+    value: i16,
+    padding4: u16,
+};
+
+pub const GamepadButtonEvent = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: JoystickId,
+    button: u8,
+    state: ReleasedOrPressed,
+    padding1: u8,
+    padding2: u8,
+};
+
+pub const GamepadDeviceEvent = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: JoystickId,
+};
+
+pub const GamepadTouchpadEvent = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: JoystickId,
+    touchpad: i32,
+    finger: i32,
+    x: f32,
+    y: f32,
+    pressure: f32,
+};
+
+pub const GamepadSensorEvent = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: JoystickId,
+    sensor: i32,
+    data: [3]f32,
+    sensor_timestamp: i64,
+};
+
+pub const AudioDeviceEvent = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
+    which: AudioDeviceId,
+    iscapture: i32,
+    data: u8,
+    padding1: u8,
+    padding2: u8,
+    padding3: u8,
 };
 
 pub const DropEvent = extern struct {
     type: EventType,
+    reserved: u32,
     timestamp: u64,
     file: ?[*:0]u8,
     window_id: WindowId,
@@ -1320,10 +1472,16 @@ pub const DropEvent = extern struct {
     y: f32,
 };
 
-pub const GamepadDeviceEvent = extern struct {
+pub const ClipboardEvent = extern struct {
     type: EventType,
+    reserved: u32,
     timestamp: u64,
-    which: JoystickId,
+};
+
+pub const QuitEvent = extern struct {
+    type: EventType,
+    reserved: u32,
+    timestamp: u64,
 };
 
 pub const Event = extern union {
@@ -1331,16 +1489,29 @@ pub const Event = extern union {
     common: CommonEvent,
     display: DisplayEvent,
     window: WindowEvent,
+    kdevice: KeyboardDeviceEvent,
     key: KeyboardEvent,
     edit: TextEditingEvent,
-    editExt: TextEditingExtEvent,
     text: TextInputEvent,
+    mdevice: MouseDeviceEvent,
     motion: MouseMotionEvent,
     button: MouseButtonEvent,
     wheel: MouseWheelEvent,
-    controllerdevice: GamepadDeviceEvent,
-    quit: QuitEvent,
+    jdevice: JoyDeviceEvent,
+    jaxis: JoyAxisEvent,
+    jball: JoyBallEvent,
+    jhat: JoyHatEvent,
+    jbutton: JoyButtonEvent,
+    jbattery: JoyBatteryEvent,
+    gdevice: GamepadDeviceEvent,
+    gaxis: GamepadAxisEvent,
+    gbutton: GamepadButtonEvent,
+    gtouchpad: GamepadTouchpadEvent,
+    gsensor: GamepadSensorEvent,
+    adevice: AudioDeviceEvent,
     drop: DropEvent,
+    clipboard: ClipboardEvent,
+    quit: QuitEvent,
 
     padding: [size]u8,
 
@@ -1372,6 +1543,8 @@ extern fn SDL_PushEvent(event: *Event) c_int;
 // Keyboard Support
 //
 //--------------------------------------------------------------------------------------------------
+pub const KeyboardId = u32;
+
 pub const Scancode = @import("keyboard.zig").Scancode;
 
 pub const Keycode = @import("keyboard.zig").Keycode;
@@ -1449,6 +1622,15 @@ pub const JoystickId = u32;
 
 pub const JOYSTICK_AXIS_MAX = 32767;
 pub const JOYSTICK_AXIS_MIN = -32768;
+
+pub const PowerState = enum(i32) {
+    power_error = -1,
+    unknown,
+    on_battery,
+    no_battery,
+    charging,
+    charged,
+};
 
 //--------------------------------------------------------------------------------------------------
 //
