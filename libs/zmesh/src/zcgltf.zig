@@ -757,6 +757,23 @@ pub const Data = extern struct {
         return null;
     }
 
+    pub fn material_index(data: Data, material_opt: ?*Material) ?usize {
+        if (material_opt) |material| {
+            if (data.materials) |materials| {
+                const material_ptr: usize = @intFromPtr(material);
+                const materials_ptr: usize = @intFromPtr(materials);
+                if (material_ptr >= materials_ptr) {
+                    const size = @sizeOf(Material);
+                    const index = (material_ptr - materials_ptr) / size;
+                    if (index < data.materials_count) {
+                        return index;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     pub fn image_index(data: Data, image_opt: ?*Image) ?usize {
         if (image_opt) |image| {
             if (data.images) |images| {
@@ -800,6 +817,23 @@ pub const Data = extern struct {
                     const size = @sizeOf(Sampler);
                     const index = (sampler_ptr - samplers_ptr) / size;
                     if (index < data.samplers_count) {
+                        return index;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    pub fn scene_index(data: Data, scene_opt: ?*Scene) ?usize {
+        if (scene_opt) |scene| {
+            if (data.scenes) |scenes| {
+                const scene_ptr: usize = @intFromPtr(scene);
+                const scenes_ptr: usize = @intFromPtr(scenes);
+                if (scene_ptr >= scenes_ptr) {
+                    const size = @sizeOf(Scene);
+                    const index = (scene_ptr - scenes_ptr) / size;
+                    if (index < data.scenes_count) {
                         return index;
                     }
                 }
