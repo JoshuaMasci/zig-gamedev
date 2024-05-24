@@ -30,14 +30,14 @@ pub fn build(b: *std.Build) void {
 Now in your code you may import and use `zjolt`:
 
 ```zig
-const zphy = @import("zjolt");
+const zjolt = @import("zjolt");
 
 pub fn main() !void {
-    try zphy.init(allocator, .{});
-    defer zphy.deinit();
+    try zjolt.init(allocator, .{});
+    defer zjolt.deinit();
 
     // Create physics system
-    const physics_system = try zphy.PhysicsSystem.create(
+    const physics_system = try zjolt.PhysicsSystem.create(
         ... // layer interfaces - please see sample application
         .{
             .max_bodies = 1024,
@@ -51,7 +51,7 @@ pub fn main() !void {
     // Create shape
     const body_interface = physics_system.getBodyInterfaceMut();
 
-    const shape_settings = try zphy.BoxShapeSettings.create(.{ 1.0, 1.0, 1.0 });
+    const shape_settings = try zjolt.BoxShapeSettings.create(.{ 1.0, 1.0, 1.0 });
     defer shape_settings.release();
 
     const shape = try shape_settings.createShape();
@@ -89,7 +89,7 @@ pub fn main() !void {
         // Draw all bodies
         const bodies = physics_system.getBodiesUnsafe();
         for (bodies) |body| {
-            if (!zphy.isValidBodyPointer(body)) continue;
+            if (!zjolt.isValidBodyPointer(body)) continue;
 
             const object_to_world = object_to_world: {
                 const position = zm.loadArr4(body.position);
