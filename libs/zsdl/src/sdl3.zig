@@ -109,11 +109,14 @@ pub const Version = extern struct {
 
 /// Returns the linked SDL version
 pub fn getVersion() Version {
-    var version: Version = undefined;
-    SDL_GetVersion(&version);
-    return version;
+    const version = SDL_GetVersion();
+    return .{
+        .major = @intCast(@divTrunc(version, 1000000)),
+        .minor = @intCast(@rem(@divTrunc(version, 1000), 1000)),
+        .patch = @intCast(@rem(version, 1000)),
+    };
 }
-extern fn SDL_GetVersion(version: *Version) void;
+extern fn SDL_GetVersion() i32;
 
 //--------------------------------------------------------------------------------------------------
 //
