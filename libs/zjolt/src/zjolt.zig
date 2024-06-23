@@ -2270,6 +2270,16 @@ pub const Character = opaque {
     pub fn setLinearVelocity(character: *Character, velocity: [3]f32) void {
         c.JPC_Character_SetLinearVelocity(@as(*c.JPC_Character, @ptrCast(character)), &velocity);
     }
+
+    pub fn getUp(character: *const Character) [3]f32 {
+        var up: [3]f32 = undefined;
+        c.JPC_Character_GetUp(@as(*const c.JPC_Character, @ptrCast(character)), &up);
+        return up;
+    }
+
+    pub fn setUp(character: *Character, up: [3]f32) void {
+        c.JPC_Character_SetUp(@as(*c.JPC_Character, @ptrCast(character)), &up);
+    }
 };
 //--------------------------------------------------------------------------------------------------
 //
@@ -2359,6 +2369,16 @@ pub const CharacterVirtual = opaque {
     }
     pub fn setLinearVelocity(character: *CharacterVirtual, velocity: [3]f32) void {
         c.JPC_CharacterVirtual_SetLinearVelocity(@as(*c.JPC_CharacterVirtual, @ptrCast(character)), &velocity);
+    }
+
+    pub fn getUp(character: *const CharacterVirtual) [3]f32 {
+        var up: [3]f32 = undefined;
+        c.JPC_CharacterVirtual_GetUp(@as(*const c.JPC_CharacterVirtual, @ptrCast(character)), &up);
+        return up;
+    }
+
+    pub fn setUp(character: *CharacterVirtual, up: [3]f32) void {
+        c.JPC_CharacterVirtual_SetUp(@as(*c.JPC_CharacterVirtual, @ptrCast(character)), &up);
     }
 };
 //--------------------------------------------------------------------------------------------------

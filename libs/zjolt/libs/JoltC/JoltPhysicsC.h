@@ -2046,6 +2046,12 @@ JPC_Character_GetLinearVelocity(const JPC_Character *in_character, float out_lin
 
 JPC_API void
 JPC_Character_SetLinearVelocity(JPC_Character *in_character, const float in_linear_velocity[3]);
+
+JPC_API void
+JPC_Character_GetUp(const JPC_Character *in_character, float out_up[3]);
+
+JPC_API void
+JPC_Character_SetUp(JPC_Character *in_character, const float in_up[3]);
 //--------------------------------------------------------------------------------------------------
 //
 // JPC_CharacterVirtualSettings
@@ -2109,6 +2115,12 @@ JPC_CharacterVirtual_GetLinearVelocity(const JPC_CharacterVirtual *in_character,
 
 JPC_API void
 JPC_CharacterVirtual_SetLinearVelocity(JPC_CharacterVirtual *in_character, const float in_linear_velocity[3]);
+
+JPC_API void
+JPC_CharacterVirtual_GetUp(const JPC_CharacterVirtual *in_character, float out_up[3]);
+
+JPC_API void
+JPC_CharacterVirtual_SetUp(JPC_CharacterVirtual *in_character, const float in_up[3]);
 //--------------------------------------------------------------------------------------------------
 #ifdef __cplusplus
 }

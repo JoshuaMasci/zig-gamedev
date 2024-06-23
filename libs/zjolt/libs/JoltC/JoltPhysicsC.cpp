@@ -2960,6 +2960,19 @@ JPC_Character_SetLinearVelocity(JPC_Character *in_character, const float in_line
     toJph(in_character)->SetLinearVelocity(loadVec3(in_linear_velocity));
 }
 //--------------------------------------------------------------------------------------------------
+JPC_API void
+JPC_Character_GetUp(const JPC_Character *in_character, float out_up[3])
+{
+    storeVec3(out_up, toJph(in_character)->GetUp());
+}
+//--------------------------------------------------------------------------------------------------
+JPC_API void
+JPC_Character_SetUp(JPC_Character *in_character, const float in_up[3])
+{
+    toJph(in_character)->SetUp(loadVec3(in_up));
+}
+
+//--------------------------------------------------------------------------------------------------
 //
 // JPC_CharacterVirtualSettings
 //
@@ -3088,4 +3101,16 @@ JPC_API void
 JPC_CharacterVirtual_SetLinearVelocity(JPC_CharacterVirtual *in_character, const float in_linear_velocity[3])
 {
     toJph(in_character)->SetLinearVelocity(loadVec3(in_linear_velocity));
+}
+//--------------------------------------------------------------------------------------------------
+JPC_API void
+JPC_CharacterVirtual_GetUp(const JPC_CharacterVirtual *in_character, float out_up[3])
+{
+    storeVec3(out_up, toJph(in_character)->GetUp());
+}
+//--------------------------------------------------------------------------------------------------
+JPC_API void
+JPC_CharacterVirtual_SetUp(JPC_CharacterVirtual *in_character, const float in_up[3])
+{
+    toJph(in_character)->SetUp(loadVec3(in_up));
 }
