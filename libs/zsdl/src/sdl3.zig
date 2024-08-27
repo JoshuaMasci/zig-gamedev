@@ -55,12 +55,10 @@ extern fn SDL_Quit() void;
 // Configuration Variables
 //
 //--------------------------------------------------------------------------------------------------
-pub const hint_windows_dpi_awareness = "SDL_WINDOWS_DPI_AWARENESS";
-
 pub fn setHint(name: [:0]const u8, value: [:0]const u8) bool {
-    return SDL_SetHint(name, value) == True;
+    return SDL_SetHint(name, value) == .true;
 }
-extern fn SDL_SetHint(name: [*:0]const u8, value: [*:0]const u8) Bool;
+extern fn SDL_SetHint(name: [*:0]const u8, value: [*:0]const u8) Bool32;
 
 //--------------------------------------------------------------------------------------------------
 //
@@ -79,7 +77,7 @@ pub const Error = error{SdlError};
 
 pub fn makeError() error{SdlError} {
     if (getError()) |str| {
-        std.log.debug("SDL3: {s}", .{str});
+        std.log.err("SDL3: {s}", .{str});
     }
     return error.SdlError;
 }
@@ -319,9 +317,9 @@ pub const gl = struct {
     extern fn SDL_GL_GetProcAddress(proc: ?[*:0]const u8) FunctionPointer;
 
     pub fn isExtensionSupported(extension: [:0]const u8) bool {
-        return SDL_GL_ExtensionSupported(extension) == True;
+        return SDL_GL_ExtensionSupported(extension) == .true;
     }
-    extern fn SDL_GL_ExtensionSupported(extension: ?[*:0]const u8) Bool;
+    extern fn SDL_GL_ExtensionSupported(extension: ?[*:0]const u8) Bool32;
 
     pub fn createContext(window: *Window) Error!Context {
         return SDL_GL_CreateContext(window) orelse return makeError();
@@ -621,9 +619,9 @@ pub const Renderer = opaque {
     extern fn SDL_GetRendererInfo(renderer: *const Renderer, info: *RendererInfo) c_int;
 
     pub fn clipEnabled(renderer: *const Renderer) bool {
-        return SDL_RenderClipEnabled(renderer) == True;
+        return SDL_RenderClipEnabled(renderer) == .true;
     }
-    pub extern fn SDL_RenderClipEnabled(renderer: *const Renderer) Bool;
+    pub extern fn SDL_RenderClipEnabled(renderer: *const Renderer) Bool32;
 
     pub fn setClipRect(r: *Renderer, clip_rect: ?*const Rect) Error!void {
         if (SDL_SetRenderClipRect(r, clip_rect) < 0) return makeError();
@@ -857,14 +855,14 @@ pub const Rect = extern struct {
 };
 
 pub fn hasRectIntersection(a: *const Rect, b: *const Rect) bool {
-    return SDL_HasRectIntersection(a, b) == True;
+    return SDL_HasRectIntersection(a, b) == .true;
 }
-extern fn SDL_HasRectIntersection(a: *const Rect, b: *const Rect) Bool;
+extern fn SDL_HasRectIntersection(a: *const Rect, b: *const Rect) Bool32;
 
 pub fn getRectIntersection(a: *const Rect, b: *const Rect, result: *Rect) bool {
-    return SDL_GetRectIntersection(a, b, result) == True;
+    return SDL_GetRectIntersection(a, b, result) == .true;
 }
-extern fn SDL_GetRectIntersection(a: *const Rect, b: *const Rect, result: *Rect) Bool;
+extern fn SDL_GetRectIntersection(a: *const Rect, b: *const Rect, result: *Rect) Bool32;
 
 pub fn getRectAndLineIntersection(
     r: *const Rect,
@@ -873,7 +871,7 @@ pub fn getRectAndLineIntersection(
     x2: *i32,
     y2: *i32,
 ) bool {
-    return SDL_GetRectAndLineIntersection(r, x1, y1, x2, y2) == True;
+    return SDL_GetRectAndLineIntersection(r, x1, y1, x2, y2) == .true;
 }
 extern fn SDL_GetRectAndLineIntersection(
     r: *const Rect,
@@ -881,7 +879,7 @@ extern fn SDL_GetRectAndLineIntersection(
     y1: *i32,
     x2: *i32,
     y2: *i32,
-) Bool;
+) Bool32;
 
 pub const FRect = extern struct {
     x: f32,
@@ -903,14 +901,14 @@ pub const FRect = extern struct {
 };
 
 pub fn hasRectIntersectionFloat(a: *const FRect, b: *const FRect) bool {
-    return SDL_HasRectIntersectionFloat(a, b) == True;
+    return SDL_HasRectIntersectionFloat(a, b) == .true;
 }
-extern fn SDL_HasRectIntersectionFloat(a: *const FRect, b: *const FRect) Bool;
+extern fn SDL_HasRectIntersectionFloat(a: *const FRect, b: *const FRect) Bool32;
 
 pub fn getRectIntersectionFloat(a: *const FRect, b: *const FRect, result: *FRect) bool {
-    return SDL_GetRectIntersectionFloat(a, b, result) == True;
+    return SDL_GetRectIntersectionFloat(a, b, result) == .true;
 }
-extern fn SDL_GetRectIntersectionFloat(a: *const FRect, b: *const FRect, result: *FRect) Bool;
+extern fn SDL_GetRectIntersectionFloat(a: *const FRect, b: *const FRect, result: *FRect) Bool32;
 
 pub fn getRectAndLineIntersectionFloat(
     r: *const FRect,
@@ -1584,9 +1582,9 @@ pub const MouseWheelDirection = enum(u32) {
 };
 
 pub fn hasMouse() bool {
-    return SDL_HasMouse() != 0;
+    return SDL_HasMouse() == .true;
 }
-extern fn SDL_HasMouse() u8;
+extern fn SDL_HasMouse() Bool32;
 
 pub const getMouseFocus = SDL_GetMouseFocus;
 extern fn SDL_GetMouseFocus() ?*Window;
@@ -1642,18 +1640,18 @@ pub const PowerState = enum(i32) {
 //--------------------------------------------------------------------------------------------------
 pub const Gamepad = opaque {
     pub const Axis = enum(c_int) {
-        leftx,
-        lefty,
-        rightx,
-        righty,
+        left_x = 0,
+        left_y,
+        right_x,
+        right_y,
         left_trigger,
         right_trigger,
     };
     pub const Button = enum(c_int) {
-        a,
-        b,
-        x,
-        y,
+        south = 0,
+        east,
+        west,
+        north,
         back,
         guide,
         start,
@@ -1673,25 +1671,54 @@ pub const Gamepad = opaque {
         touchpad,
     };
 
-    pub fn open(joystick_index: i32) ?*Gamepad {
-        return SDL_OpenGamepad(joystick_index);
-    }
-    extern fn SDL_OpenGamepad(joystick_index: i32) ?*Gamepad;
+    pub const Type = enum(c_int) {
+        unknowm = 0,
+        standard,
+        xbox360,
+        xbox_one,
+        ps3,
+        ps4,
+        ps5,
+        switch_pro,
+        switch_joycon_left,
+        switch_joycon_right,
+        switch_joycon_pair,
+    };
 
-    pub fn close(controller: *Gamepad) void {
-        SDL_CloseGamepad(controller);
+    pub fn is_gamepad(joystick_id: JoystickId) bool {
+        return SDL_IsGamepad(joystick_id) == .true;
     }
-    extern fn SDL_CloseGamepad(joystick: *Gamepad) void;
+    extern fn SDL_IsGamepad(joystick_id: JoystickId) Bool32;
 
-    pub fn getAxis(controller: *Gamepad, axis: Axis) i16 {
-        return SDL_GetGamepadAxis(controller, @intFromEnum(axis));
+    pub fn open(joystick_id: JoystickId) ?*Gamepad {
+        return SDL_OpenGamepad(joystick_id);
+    }
+    extern fn SDL_OpenGamepad(joystick_id: JoystickId) ?*Gamepad;
+
+    pub fn close(gamepad: *Gamepad) void {
+        SDL_CloseGamepad(gamepad);
+    }
+    extern fn SDL_CloseGamepad(gamepad: *Gamepad) void;
+
+    pub fn getAxis(gamepad: *Gamepad, axis: Axis) i16 {
+        return SDL_GetGamepadAxis(gamepad, @intFromEnum(axis));
     }
     extern fn SDL_GetGamepadAxis(*Gamepad, axis: c_int) i16;
 
-    pub fn getButton(controller: *Gamepad, button: Button) bool {
-        return (SDL_GetGamepadButton(controller, @intFromEnum(button)) != 0);
+    pub fn getButton(gamepad: *Gamepad, button: Button) bool {
+        return (SDL_GetGamepadButton(gamepad, @intFromEnum(button)) != 0);
     }
-    extern fn SDL_GetGamepadButton(controller: *Gamepad, button: c_int) u8;
+    extern fn SDL_GetGamepadButton(gamepad: *Gamepad, button: c_int) u8;
+
+    pub fn getName(gamepad: *Gamepad) []const u8 {
+        return std.mem.sliceTo(SDL_GetGamepadName(gamepad), 0);
+    }
+    extern fn SDL_GetGamepadName(gamepad: ?*Gamepad) [*c]const u8;
+
+    pub fn setLed(gamepad: *Gamepad, rgb: [3]u8) void {
+        _ = SDL_SetGamepadLED(gamepad, rgb[0], rgb[1], rgb[2]);
+    }
+    pub extern fn SDL_SetGamepadLED(gamepad: ?*Gamepad, red: u8, green: u8, blue: u8) c_int;
 };
 
 //--------------------------------------------------------------------------------------------------
@@ -1805,9 +1832,9 @@ extern fn SDL_OpenAudioDevice(
 ) AudioDeviceId;
 
 pub fn pauseAudioDevice(device: AudioDeviceId) bool {
-    return SDL_PauseAudioDevice(device) == True;
+    return SDL_PauseAudioDevice(device) == .true;
 }
-extern fn SDL_PauseAudioDevice(AudioDeviceId) Bool;
+extern fn SDL_PauseAudioDevice(AudioDeviceId) Bool32;
 
 pub fn queueAudio(
     comptime SampleType: type,
@@ -1959,6 +1986,7 @@ extern fn SDL_ShowSimpleMessageBox(
 // Standard Library Functionality
 //
 //--------------------------------------------------------------------------------------------------
-pub const Bool = c_int;
-pub const False = @as(Bool, 0);
-pub const True = @as(Bool, 1);
+pub const Bool32 = enum(c_int) {
+    false = 0,
+    true = 1,
+};
