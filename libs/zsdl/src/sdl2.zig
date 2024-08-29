@@ -1601,6 +1601,18 @@ pub fn showCursor(toggle: enum(i32) { enable = 1, disable = 0 }) Error!void {
 }
 extern fn SDL_ShowCursor(toggle: c_int) c_int;
 
+pub fn setRelativeMouseMode(enabled: bool) Error!void {
+    if (SDL_SetRelativeMouseMode(if (enabled) 1 else 0) < 0) {
+        return makeError();
+    }
+}
+extern fn SDL_SetRelativeMouseMode(enabled: u8) c_int;
+
+pub fn getRelativeMouseMode() bool {
+    return SDL_GetRelativeMouseMode() != 0;
+}
+extern fn SDL_GetRelativeMouseMode() u8;
+
 //--------------------------------------------------------------------------------------------------
 //
 // Joystick Support
